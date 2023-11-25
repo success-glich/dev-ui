@@ -1,30 +1,75 @@
-import { AuthOptions } from "next-auth";
-import CredentialsProvider from "next-auth/providers/credentials";
+import Credentials from "next-auth/providers/credentials";
+import { AuthOptions, ISODateString, User } from "next-auth";
+import { JWT } from "next-auth/jwt";
+import prisma from "@/database/prisma.config";
+
+// * Custom Types
+
+export interface CustomSession {
+  user?: CustomUser;
+  expires: ISODateString;
+}
+
+export interface CustomUser {
+  id?: string | null;
+  name?: string | null;
+  email?: string | null;
+  image?: string | null;
+}
 
 export const authOptions: AuthOptions = {
   pages: {
     signIn: "/login",
   },
-
+  callbacks: {
+    async jwt({ token, user }) {
+      user && (token.user = user);
+      return token;
+    },
+    async session({
+      session,
+      token,
+      user,
+    }: {
+      session: CustomSession;
+      token: JWT;
+      user: User;
+    }) {
+      session.user = token.user as CustomUser;
+      return session;
+    },
+  },
   providers: [
-    CredentialsProvider({
-      name: "Sign in with DevUi",
+    Credentials({
+      name: "Credentials",
+      type: "credentials",
       credentials: {
-        email: { label: "email", type: "email", placeholder: "email" },
-        password: { label: "Password", type: "password" },
+        email: {
+          type: "email",
+          name: "email",
+        },
+        password: { type: "password", name: "password" },
       },
-      async authorize(credentials, req) {
-        // Add logic here to look up the user from the credentials supplied
-        const user = { id: "1", name: "J Smith", email: "jsmith@example.com" };
+      async authorize(credentials) {
+        const user = await prisma.user.findUnique({
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+          where: {
+            email: credentials?.email,
+          },
+        });
 
         if (user) {
-          // Any object returned will be saved in `user` property of the JWT
-          return user;
+          return {
+            id: user.id.toString(),
+            name: user.name,
+            email: user.email,
+          };
         } else {
-          // If you return null then an error will be displayed advising the user to check their details.
           return null;
-
-          // You can also Reject this callback with an Error thus the user will be sent to the error page with the error message as a query parameter
         }
       },
     }),

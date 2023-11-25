@@ -7,19 +7,41 @@ import Image from "next/image";
 import React from "react";
 import Link from "next/link";
 import { useState } from "react";
-
+import axios from "axios";
+import { useRouter } from "next/navigation";
 function Register() {
+  const router = useRouter();
   const [authState, setAuthState] = useState({
     name: "",
     email: "",
     password: "",
-    confirmPassword: "",
+    password_confirmation: "",
   });
+  const [errors, setErrors] = useState<AuthErrorType>({});
+  const [loading, setLoading] = useState<boolean>(false);
+
   const submit = () => {
-    if (authState.password !== authState.confirmPassword) {
+    if (authState.password !== authState.password_confirmation) {
       alert("Passwords do not match");
+      return;
     }
-    console.log("authState", authState);
+    setLoading(true);
+
+    axios
+      .post("/api/auth/register", authState)
+      .then((res) => {
+        const response = res.data;
+        if (response?.status === 201) {
+          router.push(`/login?message=${response.message}`);
+        } else if (response?.status === 400) {
+          console.log("err from response status 400:", response.error);
+          setErrors(response.error);
+        }
+      })
+      .catch((err) => console.log("Error from register:", err))
+      .finally(() => {
+        setLoading(false);
+      });
   };
   return (
     <div className="h-screen ">
@@ -50,6 +72,9 @@ function Register() {
                   setAuthState({ ...authState, name: e.target.value })
                 }
               />
+              <span className="text-red-400 font-bold text-sm">
+                {errors?.name}
+              </span>
             </div>
             <div className="mt-4">
               <Label className="mb-1" htmlFor="email">
@@ -63,6 +88,9 @@ function Register() {
                   setAuthState({ ...authState, email: e.target.value })
                 }
               />
+              <span className="text-red-400 font-bold text-sm">
+                {errors?.email}
+              </span>
             </div>
             <div className="mt-4">
               <Label className="mb-1" htmlFor="password">
@@ -76,6 +104,9 @@ function Register() {
                   setAuthState({ ...authState, password: e.target.value })
                 }
               />
+              <span className="text-red-400 font-bold text-sm">
+                {errors?.password}
+              </span>
             </div>
             <div className="mt-4">
               <Label className="mb-1" htmlFor="confirmPassword">
@@ -88,15 +119,15 @@ function Register() {
                 onChange={(e) =>
                   setAuthState({
                     ...authState,
-                    confirmPassword: e.target.value,
+                    password_confirmation: e.target.value,
                   })
                 }
               />
             </div>
 
             <div className="mt-4">
-              <Button className="w-full" onClick={submit}>
-                Register
+              <Button className="w-full" onClick={submit} disabled={loading}>
+                {loading ? "processing..." : "Register"}
               </Button>
             </div>
             <div className="mt-2 text-center">
