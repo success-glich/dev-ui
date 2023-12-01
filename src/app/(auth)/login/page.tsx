@@ -25,10 +25,8 @@ function Login() {
       .post("/api/auth/login", authState)
       .then((res) => {
         const response = res.data;
-        console.log(response);
 
         if (response.status === 200) {
-          console.log("response from login:", response);
           setLoading(false);
           signIn("credentials", {
             email: authState.email,
