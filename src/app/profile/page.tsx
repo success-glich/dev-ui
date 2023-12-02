@@ -20,7 +20,7 @@ export default async function Profile() {
           {/* <Button variant="destructive">Sign Out</Button> */}
 
           <div className="mt-5 flex justify-center items-center ">
-            <AddPost />
+            <AddPost user_id={session?.user?.id!} />
 
             <SignoutBtn />
           </div>

@@ -3,3 +3,9 @@ type AuthErrorType = {
   email?: string;
   password?: string;
 };
+
+type postErrorType = {
+  title?: string;
+  description?: string;
+  image?: string;
+};
