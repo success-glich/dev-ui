@@ -7,6 +7,7 @@ import {
 } from "../api/auth/[...nextauth]/authOptions";
 import { Button } from "@/components/ui/button";
 import SignoutBtn from "@/components/SignoutBtn";
+import AddPost from "@/components/AddPost";
 
 export default async function Profile() {
   const session: CustomSession | null = await getServerSession(authOptions);
@@ -17,7 +18,12 @@ export default async function Profile() {
         <div className="text-center">
           <h1 className="text-3xl"> Hello, {session?.user?.name}</h1>
           {/* <Button variant="destructive">Sign Out</Button> */}
-          <SignoutBtn />
+
+          <div className="mt-5 flex justify-center items-center ">
+            <AddPost />
+
+            <SignoutBtn />
+          </div>
         </div>
       </div>
     </div>

@@ -20,10 +20,9 @@ export default function SignoutBtn() {
     signOut({ callbackUrl: "/login", redirect: true });
   };
   return (
-    <div>
+    <div className="ml-4">
       <AlertDialog>
         <AlertDialogTrigger>
-          {" "}
           <Button variant={"destructive"}>Sign Out</Button>{" "}
         </AlertDialogTrigger>
         <AlertDialogContent>
