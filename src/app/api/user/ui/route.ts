@@ -33,10 +33,10 @@ export async function GET(request: NextRequest) {
         },
       },
       where: {
-        user_id: Number(session.user?.id),
+        user_id: Number(session.user?.id!),
       },
     });
-    return NextResponse.json({ status: 200, data: posts }, { status: 200 });
+    return NextResponse.json({ status: 200, data: posts });
   } catch (err) {
     return NextResponse.json({
       status: 400,
@@ -48,13 +48,11 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
-  // const posts = await prisma.post.findMany();
-
   try {
-    // const session: CustomSession | null = await getServerSession(authOptions);
-    // if (!session) {
-    //   return NextResponse.json({ status: 401, message: "unauthorized" });
-    // }
+    const session: CustomSession | null = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ status: 401, message: "unauthorized" });
+    }
     const formData = await req.formData();
     console.log(formData.get("user_id"));
     const file = formData.get("image") as File | null;
