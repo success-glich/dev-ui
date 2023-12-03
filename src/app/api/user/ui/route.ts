@@ -13,6 +13,40 @@ import { join } from "path";
 import { generateRandomName } from "@/lib/utils";
 import { writeFile } from "fs/promises";
 
+export async function GET(request: NextRequest) {
+  // const session
+  try {
+    const session: CustomSession | null = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ status: 401, message: "unauthorized" });
+    }
+
+    const posts = await prisma.post.findMany({
+      orderBy: {
+        id: "desc",
+      },
+      include: {
+        user: {
+          select: {
+            name: true,
+          },
+        },
+      },
+      where: {
+        user_id: Number(session.user?.id),
+      },
+    });
+    return NextResponse.json({ status: 200, data: posts }, { status: 200 });
+  } catch (err) {
+    return NextResponse.json({
+      status: 400,
+      errors: {
+        message: "Internal Server Error !",
+      },
+    });
+  }
+}
+
 export async function POST(req: NextRequest) {
   // const posts = await prisma.post.findMany();
 
