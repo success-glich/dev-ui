@@ -15,8 +15,12 @@ import { Label } from "./ui/label";
 import { Input } from "./ui/input";
 import { Textarea } from "./ui/textarea";
 import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/use-toast";
 
 export default function AddPost({ user_id }: { user_id: string }) {
+  const router = useRouter();
+  const { toast } = useToast();
   const [sheetOpen, setSheetOpen] = useState<boolean>(false);
   const toggleSheet = () => setSheetOpen(!sheetOpen);
   const [posts, setPosts] = useState({
@@ -44,7 +48,13 @@ export default function AddPost({ user_id }: { user_id: string }) {
         const response = res.data;
         setLoading(false);
         if (response.status === 201) {
-          alert("Post Created ");
+          setSheetOpen(false);
+          toast({
+            title: "Post created successfully!",
+            description: response.message,
+            className: "bg-green-400",
+          });
+          router.refresh();
         } else if (response.status === 400) {
           alert("Post not created");
           setErrors(response.errors);

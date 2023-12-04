@@ -3,11 +3,12 @@ import { formatDate } from "@/lib/utils";
 import Image from "next/image";
 import React from "react";
 import { Button } from "./ui/button";
+import PostDeleteBtn from "./PostDeleteBtn";
 
 export default function UserPostCard({ post }: { post: PostType }) {
   return (
     <div className="text-left p-2">
-      <div className="w-[500px] h-[500px] shadow-md rounded-md">
+      <div className="w-[500px] h-min-[500px] shadow-md rounded-md">
         <div className="p-5 flex justify-between flex-col ">
           <div className="p-5 flex justify-between items-center ">
             <div>
@@ -15,7 +16,8 @@ export default function UserPostCard({ post }: { post: PostType }) {
               <p>{formatDate(post.created_at)}</p>
             </div>
 
-            <Button variant={"destructive"}>Del</Button>
+            {/* <Button variant={"destructive"}>Del</Button> */}
+            <PostDeleteBtn id={post.id} />
           </div>
           <Image
             alt="post"

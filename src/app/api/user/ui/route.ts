@@ -11,7 +11,7 @@ import { postSchema } from "@/validator/postSchema";
 import { imageValidator } from "@/validator/imageValidator";
 import { join } from "path";
 import { generateRandomName } from "@/lib/utils";
-import { writeFile } from "fs/promises";
+import { writeFile, unlink } from "fs/promises";
 
 export async function GET(request: NextRequest) {
   // const session
@@ -48,13 +48,16 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  let filename;
+  const relativeUploadDir = "/uploads";
+  const uploadDir = join(process.cwd(), "public", relativeUploadDir);
   try {
     const session: CustomSession | null = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json({ status: 401, message: "unauthorized" });
     }
     const formData = await req.formData();
-    console.log(formData.get("user_id"));
+
     const file = formData.get("image") as File | null;
     const body = {
       title: formData.get("title"),
@@ -83,11 +86,10 @@ export async function POST(req: NextRequest) {
     }
     // * Upload Image
     const buffer = Buffer.from(await file!.arrayBuffer());
-    const relativeUploadDir = "/uploads";
-    const uploadDir = join(process.cwd(), "public", relativeUploadDir);
+
     const uniqueName = Date.now() + "_" + generateRandomName(1, 9999);
     const imgExt = file?.name.split(".").pop();
-    const filename = uniqueName + "." + imgExt;
+    filename = uniqueName + "." + imgExt;
     await writeFile(`${uploadDir}/${filename}`, buffer);
 
     const newPost = await prisma.post.create({
@@ -104,6 +106,7 @@ export async function POST(req: NextRequest) {
       message: "Post created successfully!",
     });
   } catch (err) {
+    unlink(`${uploadDir}/${filename}`);
     if (err instanceof errors.E_VALIDATION_ERROR) {
       console.log(err);
       return NextResponse.json({ status: 400, errors: err.messages });
