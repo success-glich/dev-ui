@@ -11,7 +11,7 @@ export default function Loading() {
         width={400}
         height={400}
       />
-      <h1 className="text-2xl font-bold">Loading please wait</h1>
+      <h1 className="text-2xl font-bold">Loading please wait....</h1>
     </div>
   );
 }
