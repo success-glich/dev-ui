@@ -24,4 +24,6 @@ model Post {
   description String   @db.VarChar(1000)
   image       String   @db.VarChar(100)
   created_at  DateTime @default(now())
+
+  @@index([title])
 }

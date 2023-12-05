@@ -18,10 +18,9 @@ export async function getAllPosts() {
 }
 
 export default async function Home() {
-  // const session = await getServerSession(authOptions);
   const data = await getAllPosts();
   console.log("The data is", data);
-  // console.log(session);
+
   return (
     <div>
       <NavBar />
