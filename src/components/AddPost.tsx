@@ -56,7 +56,12 @@ export default function AddPost({ user_id }: { user_id: string }) {
           });
           router.refresh();
         } else if (response.status === 400) {
-          alert("Post not created");
+          // alert("Post not created");
+          toast({
+            title: "Post was not created!",
+            description: response?.message,
+            className: "bg-red-400",
+          });
           setErrors(response.errors);
         }
       })
