@@ -16,10 +16,9 @@ export default function Explore() {
     if (search.length) {
       setLoading(true);
       axios
-        .get(`/api/ui/search?query =${search}`)
+        .get(`/api/ui/search?query=${search}`)
         .then((res) => {
           const response = res.data;
-          console.log(response);
           if (response.status === 200) {
             if (response.data?.length > 0) {
               setPosts(response.data);
