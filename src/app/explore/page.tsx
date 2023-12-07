@@ -1,6 +1,8 @@
 "use client";
+import CustomLoader from "@/components/CustomLoader";
 import NavBar from "@/components/NavBar";
 import PostCard from "@/components/PostCard";
+import NoRecordFound from "@/components/NoRecordFound";
 import { Input } from "@/components/ui/input";
 import axios from "axios";
 import React, { useState } from "react";
@@ -48,10 +50,12 @@ export default function Explore() {
             />
           </form>
           {loading && (
-            <h1 className="text-2xl text-orange-200 font-bold">Loading..</h1>
+            // <h1 className="text-2xl text-orange-200 font-bold">Loading..</h1>
+            <CustomLoader />
           )}
           {notFound && (
-            <h1 className="text-2xl text-red-400 font-bold">No record Found</h1>
+            // <h1 className="text-2xl text-red-400 font-bold">No record Found</h1>
+            <NoRecordFound />
           )}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-5">
             {posts.length > 0 &&

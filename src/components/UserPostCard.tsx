@@ -4,8 +4,12 @@ import Image from "next/image";
 import React from "react";
 import { Button } from "./ui/button";
 import PostDeleteBtn from "./PostDeleteBtn";
+import EditPost from "./EditPost";
+import { useSession } from "next-auth/react";
 
 export default function UserPostCard({ post }: { post: PostType }) {
+  const { data, status } = useSession();
+
   return (
     <div className="text-left p-2">
       <div className="w-[500px] h-min-[500px] shadow-md rounded-md">
@@ -15,9 +19,15 @@ export default function UserPostCard({ post }: { post: PostType }) {
               <h1 className="text-2xl font-bold">{post.user.name}</h1>
               <p>{formatDate(post.created_at)}</p>
             </div>
+            <div className="flex gap-2">
+              {/* <Button variant={"secondary"}>Edit</Button>
+              <Edit */}
 
-            {/* <Button variant={"destructive"}>Del</Button> */}
-            <PostDeleteBtn id={post.id} />
+              {/* {data?.user?.id && <EditPost user_id={data?.user?.id!} />} */}
+              {post && <EditPost post={post} />}
+              {/* <EditPost /> */}
+              <PostDeleteBtn id={post.id} />
+            </div>
           </div>
           <Image
             alt="post"

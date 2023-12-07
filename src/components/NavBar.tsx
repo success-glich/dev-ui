@@ -6,7 +6,6 @@ import { usePathname } from "next/navigation";
 import { useSession } from "next-auth/react";
 export default function NavBar() {
   const pathName: string = usePathname();
-  console.log(pathName);
   const { data: session, status } = useSession();
   return (
     <div className="h-16 w-full flex  justify-between items-center px-6">
